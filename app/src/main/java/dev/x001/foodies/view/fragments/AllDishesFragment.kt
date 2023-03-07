@@ -1,5 +1,6 @@
 package dev.x001.foodies.view.fragments
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,12 +12,13 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import dev.x001.foodies.R
-import dev.x001.foodies.databinding.FragmentHomeBinding
+import dev.x001.foodies.databinding.FragmentAllDishesBinding
+import dev.x001.foodies.view.activities.AddUpdateDishActivity
 import dev.x001.foodies.view.viewmodel.HomeViewModel
 
-class HomeFragment : Fragment() {
+class AllDishesFragment : Fragment() {
 
-    private var _binding: FragmentHomeBinding? = null
+    private var _binding: FragmentAllDishesBinding? = null
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -30,7 +32,7 @@ class HomeFragment : Fragment() {
         val homeViewModel =
             ViewModelProvider(this).get(HomeViewModel::class.java)
 
-        _binding = FragmentHomeBinding.inflate(inflater, container, false)
+        _binding = FragmentAllDishesBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
         val textView: TextView = binding.textHome
@@ -48,7 +50,7 @@ class HomeFragment : Fragment() {
         }
 
         binding.addRecipeFloatingActionButton.setOnClickListener {
-            Toast.makeText(requireContext(), "Add Recipe", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(requireActivity(), AddUpdateDishActivity::class.java))
         }
 
         binding.filterFloatingActionButton.setOnClickListener {
