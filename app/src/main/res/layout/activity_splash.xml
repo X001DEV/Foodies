@@ -18,6 +18,6 @@
         app:layout_constraintVertical_bias="0.300"
         app:lottie_autoPlay="true"
         app:lottie_rawRes="@raw/foodies"
-        app:lottie_colorFilter="@color/primary_color_dark"/>
+        app:lottie_colorFilter="@color/white"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
