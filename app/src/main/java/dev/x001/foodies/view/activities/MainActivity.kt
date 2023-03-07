@@ -1,4 +1,4 @@
-package dev.x001.foodies
+package dev.x001.foodies.view.activities
 
 import android.os.Bundle
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -8,6 +8,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.blogspot.atifsoftwares.animatoolib.Animatoo
+import dev.x001.foodies.R
 import dev.x001.foodies.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {

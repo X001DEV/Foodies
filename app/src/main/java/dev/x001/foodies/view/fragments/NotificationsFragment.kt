@@ -1,4 +1,4 @@
-package dev.x001.foodies.ui.notifications
+package dev.x001.foodies.view.fragments
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import dev.x001.foodies.databinding.FragmentNotificationsBinding
+import dev.x001.foodies.view.viewmodel.NotificationsViewModel
 
 class NotificationsFragment : Fragment() {
 

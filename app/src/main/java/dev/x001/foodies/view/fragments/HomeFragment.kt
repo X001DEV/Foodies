@@ -1,4 +1,4 @@
-package dev.x001.foodies.ui.home
+package dev.x001.foodies.view.fragments
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import dev.x001.foodies.R
 import dev.x001.foodies.databinding.FragmentHomeBinding
+import dev.x001.foodies.view.viewmodel.HomeViewModel
 
 class HomeFragment : Fragment() {
 

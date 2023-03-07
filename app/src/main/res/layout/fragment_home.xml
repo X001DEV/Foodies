@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.home.HomeFragment">
+    tools:context=".view.fragments.HomeFragment">
 
     <TextView
         android:id="@+id/text_home"
@@ -29,7 +29,6 @@
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="24dp"
         android:src="@drawable/ic_baseline_add_24"
-        app:rippleColor="@null"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -37,7 +36,7 @@
         android:id="@+id/add_recipe_floatingActionButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="4dp"
         app:backgroundTint="@color/primary_color_dark"
         android:clickable="true"
         android:focusable="true"
@@ -51,7 +50,7 @@
         android:id="@+id/filter_floatingActionButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
+        android:layout_marginBottom="0dp"
         app:backgroundTint="@color/primary_color_dark"
         android:clickable="true"
         android:focusable="true"

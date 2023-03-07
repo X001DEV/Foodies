@@ -1,4 +1,4 @@
-package dev.x001.foodies.ui.notifications
+package dev.x001.foodies.view.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
