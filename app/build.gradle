@@ -51,4 +51,7 @@ dependencies {
 
     //lottie
     implementation "com.airbnb.android:lottie:6.0.0"
+
+    //activity transition animation
+    implementation 'com.github.AtifSayings:Animatoo:1.0.1'
 }
