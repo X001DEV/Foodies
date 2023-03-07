@@ -29,6 +29,7 @@
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="24dp"
         android:src="@drawable/ic_baseline_add_24"
+        app:rippleColor="@null"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -43,19 +44,21 @@
         app:tint="@android:color/white"
         android:src="@drawable/ic_baseline_rice_bowl_24"
         app:layout_constraintBottom_toTopOf="@+id/expandable_floatingActionButton"
-        app:layout_constraintEnd_toEndOf="@+id/expandable_floatingActionButton" />
+        app:layout_constraintEnd_toEndOf="@+id/expandable_floatingActionButton"
+        android:visibility="invisible"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/filter_floatingActionButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="4dp"
         app:backgroundTint="@color/primary_color_dark"
         android:clickable="true"
         android:focusable="true"
         app:tint="@android:color/white"
         android:src="@drawable/ic_baseline_filter_list_24"
         app:layout_constraintBottom_toTopOf="@+id/add_recipe_floatingActionButton"
-        app:layout_constraintEnd_toEndOf="@+id/add_recipe_floatingActionButton" />
+        app:layout_constraintEnd_toEndOf="@+id/add_recipe_floatingActionButton"
+        android:visibility="invisible"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
