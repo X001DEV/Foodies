@@ -54,4 +54,7 @@ dependencies {
 
     //activity transition animation
     implementation 'com.github.AtifSayings:Animatoo:1.0.1'
+
+    //sdp
+    implementation 'com.intuit.sdp:sdp-android:1.1.0'
 }
