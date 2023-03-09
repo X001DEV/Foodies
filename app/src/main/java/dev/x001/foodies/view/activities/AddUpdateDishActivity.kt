@@ -1,11 +1,19 @@
 package dev.x001.foodies.view.activities
 
+import android.Manifest
+import android.app.AlertDialog
 import android.app.Dialog
+import android.content.ActivityNotFoundException
+import android.content.Intent
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.MediaStore
+import android.provider.Settings
 import android.view.View
 import android.widget.Toast
 import com.blogspot.atifsoftwares.animatoolib.Animatoo
+import com.permissionx.guolindev.PermissionX
 import dev.x001.foodies.R
 import dev.x001.foodies.databinding.ActivityAddUpdateDishBinding
 import dev.x001.foodies.databinding.DialogImageSelectionBinding
@@ -44,15 +52,57 @@ class AddUpdateDishActivity : AppCompatActivity(), View.OnClickListener {
         dialog.setContentView(dialogBinding.root)
 
         dialogBinding.cameraLinearLayout.setOnClickListener {
-            Toast.makeText(this, "Camera", Toast.LENGTH_SHORT).show()
+            PermissionX.init(this)
+                .permissions(Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .onExplainRequestReason { scope, deniedList ->
+                    scope.showRequestReasonDialog(deniedList, "App needs permission to complete action.", "OK", "Cancel")
+                }
+                .request { allGranted, grantedList, deniedList ->
+                    if (allGranted) {
+                        Toast.makeText(this, "All permissions are granted", Toast.LENGTH_LONG).show()
+                    } else {
+                        Toast.makeText(this, "These permissions are denied: $deniedList", Toast.LENGTH_LONG).show()
+                    }
+                }
             dialog.dismiss()
         }
 
         dialogBinding.galleryLinearLayout.setOnClickListener {
-            Toast.makeText(this, "Gallery", Toast.LENGTH_SHORT).show()
+            PermissionX.init(this)
+                .permissions(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .onExplainRequestReason { scope, deniedList ->
+                    scope.showRequestReasonDialog(deniedList, "This app needs storage permission to add photos.", "OK", "Cancel")
+                }
+                .request { allGranted, grantedList, deniedList ->
+                    if (allGranted) {
+                        Toast.makeText(this, "All permissions are granted", Toast.LENGTH_LONG).show()
+                    } else {
+                        showRationalDialogForPermissions("Storage permission required. Go to settings and enable storage permission.")
+                    }
+                }
             dialog.dismiss()
         }
 
         dialog.show()
+    }
+
+    private fun showRationalDialogForPermissions(message: String){
+        AlertDialog.Builder(this)
+            .setMessage(message)
+            .setPositiveButton("Go to Settings"){
+                    _ , _ ->
+                try {
+                    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                    val uri = Uri.fromParts("package", packageName, null)
+                    intent.data = uri
+                    startActivity(intent)
+                } catch (e: ActivityNotFoundException){
+                    e.printStackTrace()
+                }
+            }
+            .setNegativeButton("CANCEL"){
+                    dialog, which ->
+                dialog.dismiss()
+            }.show()
     }
 }
