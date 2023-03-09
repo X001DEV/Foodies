@@ -1,24 +1,43 @@
 package dev.x001.foodies.view.activities
 
 import android.Manifest
+import android.app.Activity
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.ActivityNotFoundException
+import android.content.Context
+import android.content.ContextWrapper
 import android.content.Intent
+import android.graphics.Bitmap
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
 import android.provider.Settings
+import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import com.blogspot.atifsoftwares.animatoolib.Animatoo
 import com.permissionx.guolindev.PermissionX
 import dev.x001.foodies.R
 import dev.x001.foodies.databinding.ActivityAddUpdateDishBinding
 import dev.x001.foodies.databinding.DialogImageSelectionBinding
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+import java.io.OutputStream
+import java.util.*
 
 class AddUpdateDishActivity : AppCompatActivity(), View.OnClickListener {
+
+    companion object{
+        private const val IMAGE_DIRECTORY = "FoodiesImages"
+    }
+
+    private lateinit var cameraImageResultLauncher: ActivityResultLauncher<Intent>
+    private var saveImageToInternalStorage : Uri? = null
 
     private lateinit var binding: ActivityAddUpdateDishBinding
 
@@ -34,6 +53,8 @@ class AddUpdateDishActivity : AppCompatActivity(), View.OnClickListener {
         binding.addImageImageView.setOnClickListener(this)
 
         Animatoo.animateSlideLeft(this)
+
+        registerOnActivityForCameraResult()
     }
 
     override fun onClick(view: View?) {
@@ -59,7 +80,8 @@ class AddUpdateDishActivity : AppCompatActivity(), View.OnClickListener {
                 }
                 .request { allGranted, grantedList, deniedList ->
                     if (allGranted) {
-                        Toast.makeText(this, "All permissions are granted", Toast.LENGTH_LONG).show()
+                        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                        cameraImageResultLauncher.launch(intent)
                     } else {
                         showRationalDialogForPermissions("Camera and storage permission required. Go to settings and enable camera and storage permission.")
                     }
@@ -104,5 +126,47 @@ class AddUpdateDishActivity : AppCompatActivity(), View.OnClickListener {
                     dialog, which ->
                 dialog.dismiss()
             }.show()
+    }
+
+    private fun registerOnActivityForCameraResult(){
+        cameraImageResultLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
+                    result ->
+                if (result.resultCode == Activity.RESULT_OK){
+                    val data: Intent? = result.data
+
+                    if (data != null){
+                        try {
+                            val thumbNail: Bitmap =
+                                result!!.data!!.extras?.get("data") as Bitmap
+                            binding.imageView.setImageBitmap(thumbNail)
+
+                            saveImageToInternalStorage = saveImageToInternalStorage(thumbNail)
+
+                            Log.e("Saved image: ", "Path :: $saveImageToInternalStorage")
+                        } catch (e: IOException){
+                            e.printStackTrace()
+                            Toast.makeText(this@AddUpdateDishActivity, "Failed to take photo from camera.", Toast.LENGTH_LONG).show()
+                        }
+                    }
+                }
+            }
+    }
+
+    private fun saveImageToInternalStorage(bitmap: Bitmap): Uri{
+        val wrapper = ContextWrapper(applicationContext)
+        var file = wrapper.getDir(IMAGE_DIRECTORY, Context.MODE_PRIVATE)
+        file = File(file, "${UUID.randomUUID()}.jpg")
+
+        try{
+            val stream : OutputStream = FileOutputStream(file)
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+            stream.flush()
+            stream.close()
+        }catch (e: IOException){
+            e.printStackTrace()
+        }
+
+        return Uri.parse(file.absolutePath)
     }
 }
