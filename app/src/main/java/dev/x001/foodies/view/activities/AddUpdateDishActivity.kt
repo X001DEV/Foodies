@@ -53,7 +53,7 @@ class AddUpdateDishActivity : AppCompatActivity(), View.OnClickListener {
 
         dialogBinding.cameraLinearLayout.setOnClickListener {
             PermissionX.init(this)
-                .permissions(Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .permissions(Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE)
                 .onExplainRequestReason { scope, deniedList ->
                     scope.showRequestReasonDialog(deniedList, "App needs permission to complete action.", "OK", "Cancel")
                 }
@@ -61,7 +61,7 @@ class AddUpdateDishActivity : AppCompatActivity(), View.OnClickListener {
                     if (allGranted) {
                         Toast.makeText(this, "All permissions are granted", Toast.LENGTH_LONG).show()
                     } else {
-                        Toast.makeText(this, "These permissions are denied: $deniedList", Toast.LENGTH_LONG).show()
+                        showRationalDialogForPermissions("Camera and storage permission required. Go to settings and enable camera and storage permission.")
                     }
                 }
             dialog.dismiss()
@@ -69,7 +69,7 @@ class AddUpdateDishActivity : AppCompatActivity(), View.OnClickListener {
 
         dialogBinding.galleryLinearLayout.setOnClickListener {
             PermissionX.init(this)
-                .permissions(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .permissions(Manifest.permission.READ_EXTERNAL_STORAGE)
                 .onExplainRequestReason { scope, deniedList ->
                     scope.showRequestReasonDialog(deniedList, "This app needs storage permission to add photos.", "OK", "Cancel")
                 }
