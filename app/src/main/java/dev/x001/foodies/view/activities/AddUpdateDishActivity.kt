@@ -19,6 +19,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import com.blogspot.atifsoftwares.animatoolib.Animatoo
 import com.permissionx.guolindev.PermissionX
 import dev.x001.foodies.R
@@ -37,6 +38,7 @@ class AddUpdateDishActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private lateinit var cameraImageResultLauncher: ActivityResultLauncher<Intent>
+    private lateinit var galleryImageResultLauncher: ActivityResultLauncher<Intent>
     private var saveImageToInternalStorage : Uri? = null
 
     private lateinit var binding: ActivityAddUpdateDishBinding
@@ -55,6 +57,7 @@ class AddUpdateDishActivity : AppCompatActivity(), View.OnClickListener {
         Animatoo.animateSlideLeft(this)
 
         registerOnActivityForCameraResult()
+        registerOnActivityForGalleryResult()
     }
 
     override fun onClick(view: View?) {
@@ -97,7 +100,8 @@ class AddUpdateDishActivity : AppCompatActivity(), View.OnClickListener {
                 }
                 .request { allGranted, grantedList, deniedList ->
                     if (allGranted) {
-                        Toast.makeText(this, "All permissions are granted", Toast.LENGTH_LONG).show()
+                        val galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                        galleryImageResultLauncher.launch(galleryIntent)
                     } else {
                         showRationalDialogForPermissions("Storage permission required. Go to settings and enable storage permission.")
                     }
@@ -142,11 +146,36 @@ class AddUpdateDishActivity : AppCompatActivity(), View.OnClickListener {
                             binding.imageView.setImageBitmap(thumbNail)
 
                             saveImageToInternalStorage = saveImageToInternalStorage(thumbNail)
-
+                            binding.addImageImageView.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_baseline_edit_24))
                             Log.e("Saved image: ", "Path :: $saveImageToInternalStorage")
                         } catch (e: IOException){
                             e.printStackTrace()
                             Toast.makeText(this@AddUpdateDishActivity, "Failed to take photo from camera.", Toast.LENGTH_LONG).show()
+                        }
+                    }
+                }
+            }
+    }
+
+    private fun registerOnActivityForGalleryResult(){
+        galleryImageResultLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
+                    result ->
+                if (result.resultCode == Activity.RESULT_OK){
+                    val data: Intent? = result.data
+
+                    if (data != null){
+                        val contentUri = data.data
+                        try {
+                            binding.imageView.setImageURI(contentUri)
+                            val bitmap: Bitmap = MediaStore.Images.Media.getBitmap(contentResolver, contentUri)
+
+                            saveImageToInternalStorage = saveImageToInternalStorage(bitmap)
+
+                            Log.e("Saved image: ", "Path :: $saveImageToInternalStorage")
+                        } catch (e: IOException){
+                            e.printStackTrace()
+                            Toast.makeText(this@AddUpdateDishActivity, "Failed to load image from gallery.", Toast.LENGTH_LONG).show()
                         }
                     }
                 }
