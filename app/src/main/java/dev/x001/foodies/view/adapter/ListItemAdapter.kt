@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import dev.x001.foodies.databinding.ItemListBinding
+import dev.x001.foodies.view.activities.AddUpdateDishActivity
 
 class ListItemAdapter(
     private val activity: Activity,
@@ -24,6 +25,12 @@ class ListItemAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = listItems[position]
         holder.textTextView.text = item
+
+        holder.itemView.setOnClickListener {
+            if (activity is AddUpdateDishActivity){
+                activity.selectedListItem(item, selection)
+            }
+        }
     }
 
     override fun getItemCount(): Int {

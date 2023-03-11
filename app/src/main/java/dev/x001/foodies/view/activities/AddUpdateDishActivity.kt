@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
 import android.provider.Settings
+import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -25,6 +26,9 @@ import com.permissionx.guolindev.PermissionX
 import dev.x001.foodies.R
 import dev.x001.foodies.databinding.ActivityAddUpdateDishBinding
 import dev.x001.foodies.databinding.DialogImageSelectionBinding
+import dev.x001.foodies.databinding.DialogListBinding
+import dev.x001.foodies.utils.Constants
+import dev.x001.foodies.view.adapter.ListItemAdapter
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -33,13 +37,16 @@ import java.util.*
 
 class AddUpdateDishActivity : AppCompatActivity(), View.OnClickListener {
 
-    companion object{
+    companion object {
         private const val IMAGE_DIRECTORY = "FoodiesImages"
     }
 
     private lateinit var cameraImageResultLauncher: ActivityResultLauncher<Intent>
     private lateinit var galleryImageResultLauncher: ActivityResultLauncher<Intent>
-    private var saveImageToInternalStorage : Uri? = null
+    private var saveImageToInternalStorage: Uri? = null
+    private var mImagePath = ""
+
+    private lateinit var mListDialog: Dialog
 
     private lateinit var binding: ActivityAddUpdateDishBinding
 
@@ -53,6 +60,10 @@ class AddUpdateDishActivity : AppCompatActivity(), View.OnClickListener {
         }
 
         binding.addImageImageView.setOnClickListener(this)
+        binding.typeEditText.setOnClickListener(this)
+        binding.categoryEditText.setOnClickListener(this)
+        binding.cookingTimeEditText.setOnClickListener(this)
+        binding.saveButton.setOnClickListener(this)
 
         Animatoo.animateSlideLeft(this)
 
@@ -61,25 +72,83 @@ class AddUpdateDishActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     override fun onClick(view: View?) {
-        if (view != null){
-            when(view.id){
+        if (view != null) {
+            when (view.id) {
                 R.id.add_image_imageView -> {
                     dialogSelectImage()
+                }
+                R.id.type_editText -> {
+                    dialogItems("Select Dish Type", Constants.dishTypes, Constants.DISH_TYPE)
+                }
+                R.id.category_editText -> {
+                    dialogItems(
+                        "Select Dish Category",
+                        Constants.dishCategory,
+                        Constants.DISH_CATEGORY
+                    )
+                }
+                R.id.cooking_time_editText -> {
+                    dialogItems(
+                        "Select Cooking Time",
+                        Constants.dishCookTime,
+                        Constants.DISH_COOKING_TIME
+                    )
+                }
+                R.id.save_button -> {
+                    val title = binding.dishNameEditText.text.toString().trim { it <= ' ' }
+                    val type = binding.typeEditText.text.toString().trim { it <= ' ' }
+                    val category = binding.categoryEditText.text.toString().trim { it <= ' ' }
+                    val ingredients = binding.ingredientsEditText.text.toString().trim { it <= ' ' }
+                    val cookingTimeInMinutes = binding.cookingTimeEditText.text.toString().trim { it <= ' ' }
+                    val cookingDirection = binding.directionsEditText.text.toString().trim { it <= ' ' }
+
+                    when{
+                        TextUtils.isEmpty(mImagePath) -> {
+                            toast("Please select an image.")
+                        }
+                        TextUtils.isEmpty(title) -> {
+                            toast("Please enter a title.")
+                        }
+                        TextUtils.isEmpty(type) -> {
+                            toast("Please select a type.")
+                        }
+                        TextUtils.isEmpty(category) -> {
+                            toast("Please select a category.")
+                        }
+                        TextUtils.isEmpty(ingredients) -> {
+                            toast("Please write the ingredients.")
+                        }
+                        TextUtils.isEmpty(cookingTimeInMinutes) -> {
+                            toast("Please select a cooking time.")
+                        }
+                        TextUtils.isEmpty(cookingDirection) -> {
+                            toast("Please write a cooking direction.")
+                        }
+                        else -> {
+                            toast("All entries are valid.")
+                        }
+                    }
                 }
             }
         }
     }
 
-    private fun dialogSelectImage(){
+    private fun dialogSelectImage() {
         val dialog = Dialog(this)
-        val dialogBinding : DialogImageSelectionBinding = DialogImageSelectionBinding.inflate(layoutInflater)
+        val dialogBinding: DialogImageSelectionBinding =
+            DialogImageSelectionBinding.inflate(layoutInflater)
         dialog.setContentView(dialogBinding.root)
 
         dialogBinding.cameraLinearLayout.setOnClickListener {
             PermissionX.init(this)
                 .permissions(Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE)
                 .onExplainRequestReason { scope, deniedList ->
-                    scope.showRequestReasonDialog(deniedList, "App needs permission to complete action.", "OK", "Cancel")
+                    scope.showRequestReasonDialog(
+                        deniedList,
+                        "App needs permission to complete action.",
+                        "OK",
+                        "Cancel"
+                    )
                 }
                 .request { allGranted, grantedList, deniedList ->
                     if (allGranted) {
@@ -96,11 +165,17 @@ class AddUpdateDishActivity : AppCompatActivity(), View.OnClickListener {
             PermissionX.init(this)
                 .permissions(Manifest.permission.READ_EXTERNAL_STORAGE)
                 .onExplainRequestReason { scope, deniedList ->
-                    scope.showRequestReasonDialog(deniedList, "This app needs storage permission to add photos.", "OK", "Cancel")
+                    scope.showRequestReasonDialog(
+                        deniedList,
+                        "This app needs storage permission to add photos.",
+                        "OK",
+                        "Cancel"
+                    )
                 }
                 .request { allGranted, grantedList, deniedList ->
                     if (allGranted) {
-                        val galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                        val galleryIntent =
+                            Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
                         galleryImageResultLauncher.launch(galleryIntent)
                     } else {
                         showRationalDialogForPermissions("Storage permission required. Go to settings and enable storage permission.")
@@ -112,87 +187,132 @@ class AddUpdateDishActivity : AppCompatActivity(), View.OnClickListener {
         dialog.show()
     }
 
-    private fun showRationalDialogForPermissions(message: String){
+    private fun showRationalDialogForPermissions(message: String) {
         AlertDialog.Builder(this)
             .setMessage(message)
-            .setPositiveButton("Go to Settings"){
-                    _ , _ ->
+            .setPositiveButton("Go to Settings") { _, _ ->
                 try {
                     val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
                     val uri = Uri.fromParts("package", packageName, null)
                     intent.data = uri
                     startActivity(intent)
-                } catch (e: ActivityNotFoundException){
+                } catch (e: ActivityNotFoundException) {
                     e.printStackTrace()
                 }
             }
-            .setNegativeButton("CANCEL"){
-                    dialog, which ->
+            .setNegativeButton("CANCEL") { dialog, which ->
                 dialog.dismiss()
             }.show()
     }
 
-    private fun registerOnActivityForCameraResult(){
+    private fun registerOnActivityForCameraResult() {
         cameraImageResultLauncher =
-            registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
-                    result ->
-                if (result.resultCode == Activity.RESULT_OK){
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                if (result.resultCode == Activity.RESULT_OK) {
                     val data: Intent? = result.data
 
-                    if (data != null){
+                    if (data != null) {
                         try {
                             val thumbNail: Bitmap =
                                 result!!.data!!.extras?.get("data") as Bitmap
                             binding.imageView.setImageBitmap(thumbNail)
 
                             saveImageToInternalStorage = saveImageToInternalStorage(thumbNail)
-                            binding.addImageImageView.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_baseline_edit_24))
+                            binding.addImageImageView.setImageDrawable(
+                                ContextCompat.getDrawable(
+                                    this,
+                                    R.drawable.ic_baseline_edit_24
+                                )
+                            )
+                            mImagePath = saveImageToInternalStorage.toString()
                             Log.e("Saved image: ", "Path :: $saveImageToInternalStorage")
-                        } catch (e: IOException){
+                        } catch (e: IOException) {
                             e.printStackTrace()
-                            Toast.makeText(this@AddUpdateDishActivity, "Failed to take photo from camera.", Toast.LENGTH_LONG).show()
+                            Toast.makeText(
+                                this@AddUpdateDishActivity,
+                                "Failed to take photo from camera.",
+                                Toast.LENGTH_LONG
+                            ).show()
                         }
                     }
                 }
             }
     }
 
-    private fun registerOnActivityForGalleryResult(){
+    private fun registerOnActivityForGalleryResult() {
         galleryImageResultLauncher =
-            registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
-                    result ->
-                if (result.resultCode == Activity.RESULT_OK){
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                if (result.resultCode == Activity.RESULT_OK) {
                     val data: Intent? = result.data
 
-                    if (data != null){
+                    if (data != null) {
                         val contentUri = data.data
                         try {
                             binding.imageView.setImageURI(contentUri)
-                            val bitmap: Bitmap = MediaStore.Images.Media.getBitmap(contentResolver, contentUri)
+                            val bitmap: Bitmap =
+                                MediaStore.Images.Media.getBitmap(contentResolver, contentUri)
 
                             saveImageToInternalStorage = saveImageToInternalStorage(bitmap)
 
+                            mImagePath = saveImageToInternalStorage.toString()
                             Log.e("Saved image: ", "Path :: $saveImageToInternalStorage")
-                        } catch (e: IOException){
+                        } catch (e: IOException) {
                             e.printStackTrace()
-                            Toast.makeText(this@AddUpdateDishActivity, "Failed to load image from gallery.", Toast.LENGTH_LONG).show()
+                            Toast.makeText(
+                                this@AddUpdateDishActivity,
+                                "Failed to load image from gallery.",
+                                Toast.LENGTH_LONG
+                            ).show()
                         }
                     }
                 }
             }
     }
 
-    private fun saveImageToInternalStorage(bitmap: Bitmap): Uri{
+    private fun dialogItems(title: String, itemsList: List<String>, selection: String) {
+        mListDialog = Dialog(this)
+        val dialogBinding: DialogListBinding = DialogListBinding.inflate(layoutInflater)
+        mListDialog.setContentView(dialogBinding.root)
+
+        dialogBinding.titleTextView.text = title
+
+        val adapter = ListItemAdapter(this, itemsList, selection)
+        dialogBinding.listRecyclerView.adapter = adapter
+        mListDialog.show()
+    }
+
+    fun selectedListItem(item: String, selection: String) {
+        when (selection) {
+            Constants.DISH_TYPE -> {
+                mListDialog.dismiss()
+                binding.typeEditText.setText(item)
+            }
+            Constants.DISH_CATEGORY -> {
+                mListDialog.dismiss()
+                binding.categoryEditText.setText(item)
+            }
+            else -> {
+                mListDialog.dismiss()
+                binding.cookingTimeEditText.setText(item)
+            }
+        }
+    }
+
+    private fun toast(message: String){
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun saveImageToInternalStorage(bitmap: Bitmap): Uri {
         val wrapper = ContextWrapper(applicationContext)
         var file = wrapper.getDir(IMAGE_DIRECTORY, Context.MODE_PRIVATE)
         file = File(file, "${UUID.randomUUID()}.jpg")
 
-        try{
-            val stream : OutputStream = FileOutputStream(file)
+        try {
+            val stream: OutputStream = FileOutputStream(file)
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
             stream.flush()
             stream.close()
-        }catch (e: IOException){
+        } catch (e: IOException) {
             e.printStackTrace()
         }
 

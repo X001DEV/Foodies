@@ -147,6 +147,8 @@
                         android:id="@+id/cooking_time_editText"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:focusableInTouchMode="false"
+                        android:focusable="false"
                         android:inputType="time"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
