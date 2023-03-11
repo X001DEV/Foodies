@@ -33,4 +33,18 @@ object Constants {
         "Wraps",
         "Other"
     )
+
+    val dishCookTime = arrayListOf(
+        "10",
+        "15",
+        "20",
+        "30",
+        "45",
+        "50",
+        "60",
+        "90",
+        "120",
+        "150",
+        "180"
+    )
 }
