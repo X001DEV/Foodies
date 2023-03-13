@@ -2,6 +2,7 @@ package dev.x001.foodies.view.fragments
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,15 +11,23 @@ import android.view.animation.AnimationUtils
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import dev.x001.foodies.R
+import dev.x001.foodies.application.DishApplication
 import dev.x001.foodies.databinding.FragmentAllDishesBinding
 import dev.x001.foodies.view.activities.AddUpdateDishActivity
+import dev.x001.foodies.viewmodel.DishViewModel
+import dev.x001.foodies.viewmodel.DishViewModelFactory
 import dev.x001.foodies.viewmodel.HomeViewModel
 
 class AllDishesFragment : Fragment() {
 
     private var _binding: FragmentAllDishesBinding? = null
+
+    private val mDishViewModel: DishViewModel by viewModels{
+        DishViewModelFactory((requireActivity().application as DishApplication).repository)
+    }
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -44,6 +53,16 @@ class AllDishesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        mDishViewModel.allDishesList.observe(viewLifecycleOwner){
+            dishes ->
+            dishes.let {
+                Toast.makeText(requireActivity(), "DATA IS UPDATED", Toast.LENGTH_SHORT).show()
+                for (item in it){
+                    Log.i("Dish title", "${item.dish}")
+                }
+            }
+        }
 
         binding.expandableFloatingActionButton.setOnClickListener {
             onExpandableFABClicked()
