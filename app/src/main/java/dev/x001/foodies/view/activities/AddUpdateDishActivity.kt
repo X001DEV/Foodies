@@ -20,15 +20,20 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import com.blogspot.atifsoftwares.animatoolib.Animatoo
 import com.permissionx.guolindev.PermissionX
 import dev.x001.foodies.R
+import dev.x001.foodies.application.DishApplication
 import dev.x001.foodies.databinding.ActivityAddUpdateDishBinding
 import dev.x001.foodies.databinding.DialogImageSelectionBinding
 import dev.x001.foodies.databinding.DialogListBinding
+import dev.x001.foodies.model.entities.Dish
 import dev.x001.foodies.utils.Constants
 import dev.x001.foodies.view.adapter.ListItemAdapter
+import dev.x001.foodies.viewmodel.DishViewModel
+import dev.x001.foodies.viewmodel.DishViewModelFactory
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -37,9 +42,6 @@ import java.util.*
 
 class AddUpdateDishActivity : AppCompatActivity(), View.OnClickListener {
 
-    companion object {
-        private const val IMAGE_DIRECTORY = "FoodiesImages"
-    }
 
     private lateinit var cameraImageResultLauncher: ActivityResultLauncher<Intent>
     private lateinit var galleryImageResultLauncher: ActivityResultLauncher<Intent>
@@ -47,6 +49,10 @@ class AddUpdateDishActivity : AppCompatActivity(), View.OnClickListener {
     private var mImagePath = ""
 
     private lateinit var mListDialog: Dialog
+
+    private val mDishViewModel: DishViewModel by viewModels {
+        DishViewModelFactory((application as  DishApplication).repository)
+    }
 
     private lateinit var binding: ActivityAddUpdateDishBinding
 
@@ -125,7 +131,23 @@ class AddUpdateDishActivity : AppCompatActivity(), View.OnClickListener {
                             toast("Please write a cooking direction.")
                         }
                         else -> {
-                            toast("All entries are valid.")
+                           val dishDetails: Dish = Dish(
+                               mImagePath,
+                               Constants.DISH_IMAGE_SOURCE_LOCAL,
+                               title,
+                               type,
+                               category,
+                               ingredients,
+                               cookingTimeInMinutes,
+                               cookingDirection,
+                               false
+                           )
+
+                           mDishViewModel.insert(dishDetails)
+                            toast("Dish added!")
+                            Log.d("Insertion", "Success")
+                            //close activity
+                            finish()
                         }
                     }
                 }
@@ -317,5 +339,9 @@ class AddUpdateDishActivity : AppCompatActivity(), View.OnClickListener {
         }
 
         return Uri.parse(file.absolutePath)
+    }
+
+    companion object {
+        private const val IMAGE_DIRECTORY = "FoodiesImages"
     }
 }
