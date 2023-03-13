@@ -14,7 +14,7 @@ import androidx.lifecycle.ViewModelProvider
 import dev.x001.foodies.R
 import dev.x001.foodies.databinding.FragmentAllDishesBinding
 import dev.x001.foodies.view.activities.AddUpdateDishActivity
-import dev.x001.foodies.view.viewmodel.HomeViewModel
+import dev.x001.foodies.viewmodel.HomeViewModel
 
 class AllDishesFragment : Fragment() {
 

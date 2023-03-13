@@ -8,7 +8,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import dev.x001.foodies.databinding.FragmentDashboardBinding
-import dev.x001.foodies.view.viewmodel.DashboardViewModel
+import dev.x001.foodies.viewmodel.DashboardViewModel
 
 class DashboardFragment : Fragment() {
 
