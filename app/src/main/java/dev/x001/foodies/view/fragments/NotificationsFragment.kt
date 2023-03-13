@@ -8,7 +8,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import dev.x001.foodies.databinding.FragmentNotificationsBinding
-import dev.x001.foodies.viewmodel.NotificationsViewModel
+import dev.x001.foodies.view.viewmodel.NotificationsViewModel
 
 class NotificationsFragment : Fragment() {
 
