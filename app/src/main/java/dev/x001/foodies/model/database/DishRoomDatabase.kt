@@ -8,6 +8,9 @@ import dev.x001.foodies.model.entities.Dish
 
 @Database(entities = [Dish::class], version = 1)
 abstract class DishRoomDatabase: RoomDatabase() {
+
+    abstract fun dishDao(): DishDao
+
     companion object{
         @Volatile
         private var INSTANCE: DishRoomDatabase? = null
