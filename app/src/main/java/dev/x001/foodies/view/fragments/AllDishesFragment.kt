@@ -13,54 +13,53 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.GridLayoutManager
 import dev.x001.foodies.R
 import dev.x001.foodies.application.DishApplication
 import dev.x001.foodies.databinding.FragmentAllDishesBinding
 import dev.x001.foodies.view.activities.AddUpdateDishActivity
+import dev.x001.foodies.view.adapter.DishAdapter
 import dev.x001.foodies.viewmodel.DishViewModel
 import dev.x001.foodies.viewmodel.DishViewModelFactory
 import dev.x001.foodies.viewmodel.HomeViewModel
 
 class AllDishesFragment : Fragment() {
 
-    private var _binding: FragmentAllDishesBinding? = null
+    private lateinit var binding: FragmentAllDishesBinding
 
     private val mDishViewModel: DishViewModel by viewModels{
         DishViewModelFactory((requireActivity().application as DishApplication).repository)
     }
 
-    // This property is only valid between onCreateView and
-    // onDestroyView.
-    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val homeViewModel =
-            ViewModelProvider(this).get(HomeViewModel::class.java)
-
-        _binding = FragmentAllDishesBinding.inflate(inflater, container, false)
-        val root: View = binding.root
-
-        /*val textView: TextView = binding.textHome
-        homeViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
-        }*/
-        return root
+        binding = FragmentAllDishesBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val dishAdapter = DishAdapter(this@AllDishesFragment)
+        binding.dishRecyclerView.adapter = dishAdapter
+
         mDishViewModel.allDishesList.observe(viewLifecycleOwner){
             dishes ->
             dishes.let {
                 Toast.makeText(requireActivity(), "DATA IS UPDATED", Toast.LENGTH_SHORT).show()
-                for (item in it){
-                    Log.i("Dish title", "${item.dish}")
-                }
+               if (it.isNotEmpty()){
+                   binding.dishRecyclerView.visibility = View.VISIBLE
+                   binding.textNoDataTextView.visibility = View.GONE
+
+                   dishAdapter.dishesList(it)
+               }else{
+                   binding.dishRecyclerView.visibility = View.INVISIBLE
+                   binding.textNoDataTextView.visibility = View.VISIBLE
+               }
             }
         }
 
@@ -118,6 +117,5 @@ class AllDishesFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding = null
     }
 }
