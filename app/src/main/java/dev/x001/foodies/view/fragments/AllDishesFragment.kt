@@ -13,6 +13,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import dev.x001.foodies.R
 import dev.x001.foodies.application.DishApplication
@@ -74,6 +75,10 @@ class AllDishesFragment : Fragment() {
         binding.filterFloatingActionButton.setOnClickListener {
             Toast.makeText(requireContext(), "Filter", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    fun dishDetails(){
+        findNavController().navigate(R.id.action_navigation_all_dishes_to_dishDetailsFragment)
     }
 
     private var fabClicked = false
