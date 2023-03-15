@@ -49,7 +49,7 @@
             android:layout_height="wrap_content"
             android:text="Lunch · Dessert"
             android:textSize="18sp"
-            android:textColor="@color/secondary_color"
+            android:textColor="@color/primary_color"
             android:layout_marginHorizontal="16dp" />
 
         <TextView
@@ -57,7 +57,7 @@
             android:layout_height="wrap_content"
             android:text="Ingredients"
             android:textSize="20sp"
-            android:textColor="@color/primary_color"
+            android:textColor="@color/secondary_color"
             android:layout_marginHorizontal="16dp"
             android:layout_marginTop="16dp"/>
 
@@ -75,7 +75,7 @@
             android:layout_height="wrap_content"
             android:text="Directions to cook"
             android:textSize="20sp"
-            android:textColor="@color/primary_color"
+            android:textColor="@color/secondary_color"
             android:layout_marginHorizontal="16dp"
             android:layout_marginTop="16dp"/>
 
@@ -89,14 +89,21 @@
             android:layout_marginHorizontal="16dp" />
 
         <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cooking time"
+            android:textSize="20sp"
+            android:textColor="@color/secondary_color"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="16dp"/>
+
+        <TextView
             android:id="@+id/cooking_time_textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="Approx cooking time: 10 minutes"
-            android:textSize="16sp"
+            android:text="10 minutes"
+            android:textSize="18sp"
             android:textColor="@android:color/darker_gray"
-            android:layout_marginTop="16dp"
             android:layout_marginHorizontal="16dp" />
 
 
