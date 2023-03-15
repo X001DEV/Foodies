@@ -19,6 +19,7 @@ import dev.x001.foodies.R
 import dev.x001.foodies.application.DishApplication
 import dev.x001.foodies.databinding.FragmentAllDishesBinding
 import dev.x001.foodies.view.activities.AddUpdateDishActivity
+import dev.x001.foodies.view.activities.MainActivity
 import dev.x001.foodies.view.adapter.DishAdapter
 import dev.x001.foodies.viewmodel.DishViewModel
 import dev.x001.foodies.viewmodel.DishViewModelFactory
@@ -79,6 +80,16 @@ class AllDishesFragment : Fragment() {
 
     fun dishDetails(){
         findNavController().navigate(R.id.action_navigation_all_dishes_to_dishDetailsFragment)
+        if (requireActivity() is MainActivity){
+            (activity as MainActivity?)!!.hideBottomNavigationView()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (requireActivity() is MainActivity){
+            (activity as MainActivity?)!!.showBottomNavigationView()
+        }
     }
 
     private var fabClicked = false
