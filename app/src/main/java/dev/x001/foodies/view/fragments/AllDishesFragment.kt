@@ -13,11 +13,14 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.GridLayoutManager
 import dev.x001.foodies.R
 import dev.x001.foodies.application.DishApplication
 import dev.x001.foodies.databinding.FragmentAllDishesBinding
+import dev.x001.foodies.model.entities.Dish
 import dev.x001.foodies.view.activities.AddUpdateDishActivity
 import dev.x001.foodies.view.activities.MainActivity
 import dev.x001.foodies.view.adapter.DishAdapter
@@ -78,8 +81,10 @@ class AllDishesFragment : Fragment() {
         }
     }
 
-    fun dishDetails(){
-        findNavController().navigate(R.id.action_navigation_all_dishes_to_dishDetailsFragment)
+    fun dishDetails(dish: Dish){
+        findNavController().navigate(AllDishesFragmentDirections.actionNavigationAllDishesToDishDetailsFragment(
+            dish
+        ))
         if (requireActivity() is MainActivity){
             (activity as MainActivity?)!!.hideBottomNavigationView()
         }
