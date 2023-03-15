@@ -13,4 +13,9 @@ class DishRepository(private val dishDao: DishDao) {
 
     val allDishesList: Flow<List<Dish>> = dishDao.getAllDishesList()
 
+    @WorkerThread
+    suspend fun updateDishData(dish: Dish){
+        dishDao.updateDishDetails(dish)
+    }
+
 }
