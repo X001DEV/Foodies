@@ -2,7 +2,6 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
-    id 'androidx.navigation.safeargs.kotlin'
 }
 
 android {
@@ -40,6 +39,7 @@ android {
     buildFeatures {
         viewBinding true
     }
+
 }
 
 dependencies {
@@ -89,4 +89,5 @@ dependencies {
 
     //kotlin extension for coroutine support with activities
     implementation "androidx.activity:activity-ktx:$activityVersion"
+
 }
