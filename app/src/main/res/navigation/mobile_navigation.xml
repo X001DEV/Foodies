@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_navigation_all_dishes_to_dishDetailsFragment"
             app:destination="@id/dishDetailsFragment" />
+        <argument
+            android:name="dishDetails"
+            app:argType="dev.x001.foodies.model.entities.Dish" />
     </fragment>
 
     <fragment
