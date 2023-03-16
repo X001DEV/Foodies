@@ -11,6 +11,7 @@ import androidx.navigation.fragment.findNavController
 import dev.x001.foodies.application.DishApplication
 import dev.x001.foodies.databinding.FragmentFavoriteDishesBinding
 import dev.x001.foodies.model.entities.Dish
+import dev.x001.foodies.view.activities.MainActivity
 import dev.x001.foodies.view.adapter.DishAdapter
 import dev.x001.foodies.viewmodel.DashboardViewModel
 import dev.x001.foodies.viewmodel.DishViewModel
@@ -65,16 +66,17 @@ class FavoriteDishesFragment : Fragment() {
         findNavController().navigate(FavoriteDishesFragmentDirections.actionNavigationFavoriteDishesToDishDetailsFragment(
             dish
         ))
-    }
-
-    /*fun dishDetails(dish: Dish){
-        findNavController().navigate(AllDishesFragmentDirections.actionNavigationAllDishesToDishDetailsFragment(
-            dish
-        ))
         if (requireActivity() is MainActivity){
             (activity as MainActivity?)!!.hideBottomNavigationView()
         }
-    }*/
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (requireActivity() is MainActivity){
+            (activity as MainActivity?)!!.showBottomNavigationView()
+        }
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()
