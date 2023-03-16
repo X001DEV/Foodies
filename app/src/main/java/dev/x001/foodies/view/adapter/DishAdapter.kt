@@ -59,7 +59,6 @@ class DishAdapter(private val fragment: Fragment): RecyclerView.Adapter<DishAdap
                 if (it.itemId == R.id.action_edit_dish){
                     val intent = Intent(fragment.requireContext(), AddUpdateDishActivity::class.java)
                     intent.putExtra(Constants.EXTRA_DISH_DETAILS, dish)
-                    Log.d("DISH PUT EXTRA", "${dish.dish}")
                     fragment.requireActivity().startActivity(intent)
 
                 }else if (it.itemId == R.id.action_delete_dish){

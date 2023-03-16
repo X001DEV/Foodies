@@ -1,5 +1,6 @@
 package dev.x001.foodies.view.fragments
 
+import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -14,11 +15,14 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import dev.x001.foodies.R
 import dev.x001.foodies.application.DishApplication
+import dev.x001.foodies.databinding.DialogListBinding
 import dev.x001.foodies.databinding.FragmentAllDishesBinding
 import dev.x001.foodies.model.entities.Dish
+import dev.x001.foodies.utils.Constants
 import dev.x001.foodies.view.activities.AddUpdateDishActivity
 import dev.x001.foodies.view.activities.MainActivity
 import dev.x001.foodies.view.adapter.DishAdapter
+import dev.x001.foodies.view.adapter.ListItemAdapter
 import dev.x001.foodies.viewmodel.DishViewModel
 import dev.x001.foodies.viewmodel.DishViewModelFactory
 
@@ -71,7 +75,7 @@ class AllDishesFragment : Fragment() {
         }
 
         binding.filterFloatingActionButton.setOnClickListener {
-            Toast.makeText(requireContext(), "Filter", Toast.LENGTH_SHORT).show()
+            filterDishesListDialog()
         }
     }
 
@@ -100,6 +104,21 @@ class AllDishesFragment : Fragment() {
         }
         dialog.create()
         dialog.show()
+    }
+
+    private fun filterDishesListDialog(){
+        val listDialog = Dialog(requireActivity())
+        val dialogBinding: DialogListBinding = DialogListBinding.inflate(layoutInflater)
+        listDialog.setContentView(dialogBinding.root)
+
+        dialogBinding.titleTextView.text = "Select item filter"
+        val dishTypes = Constants.dishTypes
+        dishTypes.add(0, Constants.ALL_ITEMS)
+
+        val adapter = ListItemAdapter(requireActivity(), dishTypes, Constants.FILTER_SELECTION)
+
+        dialogBinding.listRecyclerView.adapter = adapter
+        listDialog.show()
     }
 
     override fun onResume() {
