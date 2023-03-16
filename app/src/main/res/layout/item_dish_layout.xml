@@ -8,6 +8,7 @@
     android:elevation="8dp"
     android:layout_marginHorizontal="8dp"
     android:layout_marginTop="8dp"
+    android:id="@+id/parent_CardView"
     app:cardUseCompatPadding="true">
 
     <androidx.appcompat.widget.LinearLayoutCompat
@@ -22,15 +23,31 @@
             android:scaleType="centerCrop"
             tools:src="@mipmap/ic_launcher"/>
 
-        <TextView
-            android:id="@+id/dish_textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            tools:text="Dish Name"
-            android:textColor="@android:color/black"
-            android:textSize="16sp"
-            android:layout_margin="16dp"/>
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:layout_margin="16dp">
+
+            <TextView
+                android:id="@+id/dish_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:layout_gravity="center"
+                tools:text="Dish Name"
+                android:layout_weight="1"
+                android:textColor="@android:color/black"
+                android:textSize="16sp" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/more_imageView"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/ic_baseline_more_horiz_24"
+                android:tint="@color/primary_color_dark" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 

@@ -1,10 +1,14 @@
 package dev.x001.foodies.view.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import dev.x001.foodies.R
 import dev.x001.foodies.databinding.ItemDishLayoutBinding
 import dev.x001.foodies.model.entities.Dish
 import dev.x001.foodies.view.fragments.AllDishesFragment
@@ -17,6 +21,7 @@ class DishAdapter(private val fragment: Fragment): RecyclerView.Adapter<DishAdap
     class ViewHolder(view: ItemDishLayoutBinding): RecyclerView.ViewHolder(view.root) {
         val imageImageView = view.dishImageView
         val dishTextView = view.dishTextView
+        val moreImageView = view.moreImageView
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -33,15 +38,35 @@ class DishAdapter(private val fragment: Fragment): RecyclerView.Adapter<DishAdap
         holder.dishTextView.text = dish.dish
 
         holder.itemView.setOnClickListener {
-            if (fragment is AllDishesFragment){
-                fragment.dishDetails(dish)
+            when (fragment) {
+                is FavoriteDishesFragment -> {
+                    fragment.favoriteDishDetails(dish)
+                }
+                is AllDishesFragment -> {
+                    fragment.dishDetails(dish)
+                }
             }
         }
 
-        holder.itemView.setOnClickListener {
-            if (fragment is FavoriteDishesFragment){
-                fragment.favoriteDishDetails(dish)
+        holder.moreImageView.setOnClickListener {
+            val popUp = PopupMenu(fragment.context, holder.moreImageView)
+            popUp.menuInflater.inflate(R.menu.adapter_menu, popUp.menu)
+
+            popUp.setOnMenuItemClickListener {
+                if (it.itemId == R.id.action_edit_dish){
+                    Log.i("EDIT", "${dish.dish}")
+                }else if (it.itemId == R.id.action_delete_dish){
+                    Log.i("DELETE", "${dish.dish}")
+                }
+                true
             }
+            popUp.show()
+        }
+
+        if (fragment is AllDishesFragment){
+            holder.moreImageView.visibility = View.VISIBLE
+        }else if (fragment is FavoriteDishesFragment){
+            holder.moreImageView.visibility = View.GONE
         }
 
     }
