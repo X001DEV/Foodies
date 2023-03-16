@@ -63,7 +63,9 @@ class DishAdapter(private val fragment: Fragment): RecyclerView.Adapter<DishAdap
                     fragment.requireActivity().startActivity(intent)
 
                 }else if (it.itemId == R.id.action_delete_dish){
-                    Log.i("DELETE", "${dish.dish}")
+                    if (fragment is AllDishesFragment){
+                        fragment.deleteDish(dish)
+                    }
                 }
                 true
             }

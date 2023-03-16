@@ -2,21 +2,16 @@ package dev.x001.foodies.view.fragments
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
-import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
-import androidx.recyclerview.widget.GridLayoutManager
 import dev.x001.foodies.R
 import dev.x001.foodies.application.DishApplication
 import dev.x001.foodies.databinding.FragmentAllDishesBinding
@@ -26,7 +21,6 @@ import dev.x001.foodies.view.activities.MainActivity
 import dev.x001.foodies.view.adapter.DishAdapter
 import dev.x001.foodies.viewmodel.DishViewModel
 import dev.x001.foodies.viewmodel.DishViewModelFactory
-import dev.x001.foodies.viewmodel.HomeViewModel
 
 class AllDishesFragment : Fragment() {
 
@@ -88,6 +82,24 @@ class AllDishesFragment : Fragment() {
         if (requireActivity() is MainActivity){
             (activity as MainActivity?)!!.hideBottomNavigationView()
         }
+    }
+
+    fun deleteDish(dish: Dish){
+        val dialog = AlertDialog.Builder(requireActivity())
+        dialog.setTitle("Delete Dish")
+        dialog.setMessage("Are you sure you want to delete ${dish.dish}?")
+        dialog.setIcon(R.drawable.ic_baseline_delete_24)
+        dialog.setPositiveButton("Yes"){
+            dialogInterface, _ ->
+            mDishViewModel.delete(dish)
+            dialogInterface.dismiss()
+        }
+        dialog.setNegativeButton("Cancel"){
+                dialogInterface, _ ->
+            dialogInterface.dismiss()
+        }
+        dialog.create()
+        dialog.show()
     }
 
     override fun onResume() {
