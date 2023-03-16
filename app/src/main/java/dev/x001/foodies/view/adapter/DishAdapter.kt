@@ -8,6 +8,7 @@ import com.bumptech.glide.Glide
 import dev.x001.foodies.databinding.ItemDishLayoutBinding
 import dev.x001.foodies.model.entities.Dish
 import dev.x001.foodies.view.fragments.AllDishesFragment
+import dev.x001.foodies.view.fragments.FavoriteDishesFragment
 
 class DishAdapter(private val fragment: Fragment): RecyclerView.Adapter<DishAdapter.ViewHolder>() {
 
@@ -36,6 +37,13 @@ class DishAdapter(private val fragment: Fragment): RecyclerView.Adapter<DishAdap
                 fragment.dishDetails(dish)
             }
         }
+
+        holder.itemView.setOnClickListener {
+            if (fragment is FavoriteDishesFragment){
+                fragment.favoriteDishDetails(dish)
+            }
+        }
+
     }
 
     override fun getItemCount(): Int {

@@ -1,15 +1,16 @@
 package dev.x001.foodies.view.fragments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import dev.x001.foodies.application.DishApplication
 import dev.x001.foodies.databinding.FragmentFavoriteDishesBinding
+import dev.x001.foodies.model.entities.Dish
 import dev.x001.foodies.view.adapter.DishAdapter
 import dev.x001.foodies.viewmodel.DashboardViewModel
 import dev.x001.foodies.viewmodel.DishViewModel
@@ -59,6 +60,21 @@ class FavoriteDishesFragment : Fragment() {
             }
         }
     }
+
+    fun favoriteDishDetails(dish: Dish){
+        findNavController().navigate(FavoriteDishesFragmentDirections.actionNavigationFavoriteDishesToDishDetailsFragment(
+            dish
+        ))
+    }
+
+    /*fun dishDetails(dish: Dish){
+        findNavController().navigate(AllDishesFragmentDirections.actionNavigationAllDishesToDishDetailsFragment(
+            dish
+        ))
+        if (requireActivity() is MainActivity){
+            (activity as MainActivity?)!!.hideBottomNavigationView()
+        }
+    }*/
 
     override fun onDestroyView() {
         super.onDestroyView()
