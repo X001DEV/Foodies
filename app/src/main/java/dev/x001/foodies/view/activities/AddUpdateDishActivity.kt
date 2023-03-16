@@ -10,6 +10,8 @@ import android.content.ContextWrapper
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
+import android.os.Build
+import android.os.Build.VERSION
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
@@ -23,6 +25,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import com.blogspot.atifsoftwares.animatoolib.Animatoo
+import com.bumptech.glide.Glide
 import com.permissionx.guolindev.PermissionX
 import dev.x001.foodies.R
 import dev.x001.foodies.application.DishApplication
@@ -50,6 +53,8 @@ class AddUpdateDishActivity : AppCompatActivity(), View.OnClickListener {
 
     private lateinit var mListDialog: Dialog
 
+    private var mDishDetails: Dish? = null
+
     private val mDishViewModel: DishViewModel by viewModels {
         DishViewModelFactory((application as  DishApplication).repository)
     }
@@ -60,6 +65,31 @@ class AddUpdateDishActivity : AppCompatActivity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         binding = ActivityAddUpdateDishBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        if (intent.hasExtra(Constants.EXTRA_DISH_DETAILS)){
+            mDishDetails = intent.getParcelableExtra(Constants.EXTRA_DISH_DETAILS)
+        }
+
+        toast("${mDishDetails?.dish}")
+
+        mDishDetails?.let {
+            binding.toolbar.title = "Update"
+
+            if(it.id != 0){
+                mImagePath = it.image
+                Glide.with(this@AddUpdateDishActivity)
+                    .load(mImagePath)
+                    .into(binding.imageView)
+                binding.dishNameEditText.setText(it.dish)
+                binding.typeEditText.setText(it.type)
+                binding.categoryEditText.setText(it.category)
+                binding.ingredientsEditText.setText(it.ingredients)
+                binding.cookingTimeEditText.setText(it.cookingTime)
+                binding.directionsEditText.setText(it.directionToCook)
+
+                binding.saveButton.text = "Update"
+            }
+        }
 
         binding.toolbar.setNavigationOnClickListener {
             onBackPressedDispatcher.onBackPressed()
@@ -131,21 +161,42 @@ class AddUpdateDishActivity : AppCompatActivity(), View.OnClickListener {
                             toast("Please write a cooking direction.")
                         }
                         else -> {
+                            var dishID = 0
+                            var imageSource = Constants.DISH_IMAGE_SOURCE_LOCAL
+                            var favoriteDish = false
+
+                            mDishDetails?.let {
+                                if (it.id != 0){
+                                    dishID = it.id
+                                    imageSource = it.imageSource
+                                    favoriteDish = it.favoriteDish
+                                }
+                            }
+
+
                            val dishDetails: Dish = Dish(
                                mImagePath,
-                               Constants.DISH_IMAGE_SOURCE_LOCAL,
+                               imageSource,
                                title,
                                type,
                                category,
                                ingredients,
                                cookingTimeInMinutes,
                                cookingDirection,
-                               false
+                               favoriteDish,
+                               dishID
                            )
 
-                           mDishViewModel.insert(dishDetails)
-                            toast("Dish added!")
-                            Log.d("Insertion", "Success")
+                            if (dishID == 0){
+                                mDishViewModel.insert(dishDetails)
+                                toast("Dish added!")
+                                Log.d("Insertion", "Success")
+                            }else{
+                                //Update dish
+                                mDishViewModel.update(dishDetails)
+                                toast("Updated dish!")
+                            }
+
                             //close activity
                             finish()
                         }

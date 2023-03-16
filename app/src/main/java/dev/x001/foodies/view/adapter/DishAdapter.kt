@@ -1,5 +1,6 @@
 package dev.x001.foodies.view.adapter
 
+import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +12,8 @@ import com.bumptech.glide.Glide
 import dev.x001.foodies.R
 import dev.x001.foodies.databinding.ItemDishLayoutBinding
 import dev.x001.foodies.model.entities.Dish
+import dev.x001.foodies.utils.Constants
+import dev.x001.foodies.view.activities.AddUpdateDishActivity
 import dev.x001.foodies.view.fragments.AllDishesFragment
 import dev.x001.foodies.view.fragments.FavoriteDishesFragment
 
@@ -54,7 +57,11 @@ class DishAdapter(private val fragment: Fragment): RecyclerView.Adapter<DishAdap
 
             popUp.setOnMenuItemClickListener {
                 if (it.itemId == R.id.action_edit_dish){
-                    Log.i("EDIT", "${dish.dish}")
+                    val intent = Intent(fragment.requireContext(), AddUpdateDishActivity::class.java)
+                    intent.putExtra(Constants.EXTRA_DISH_DETAILS, dish)
+                    Log.d("DISH PUT EXTRA", "${dish.dish}")
+                    fragment.requireActivity().startActivity(intent)
+
                 }else if (it.itemId == R.id.action_delete_dish){
                     Log.i("DELETE", "${dish.dish}")
                 }
