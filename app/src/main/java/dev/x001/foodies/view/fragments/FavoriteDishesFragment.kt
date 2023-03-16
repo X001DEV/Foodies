@@ -5,12 +5,12 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import dev.x001.foodies.application.DishApplication
 import dev.x001.foodies.databinding.FragmentFavoriteDishesBinding
+import dev.x001.foodies.view.adapter.DishAdapter
 import dev.x001.foodies.viewmodel.DashboardViewModel
 import dev.x001.foodies.viewmodel.DishViewModel
 import dev.x001.foodies.viewmodel.DishViewModelFactory
@@ -33,27 +33,28 @@ class FavoriteDishesFragment : Fragment() {
             ViewModelProvider(this).get(DashboardViewModel::class.java)
 
         _binding = FragmentFavoriteDishesBinding.inflate(inflater, container, false)
-        val root: View = binding.root
-
-        val textView: TextView = binding.textDashboard
-        dashboardViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
-        }
-        return root
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val dishAdapter = DishAdapter(this@FavoriteDishesFragment)
+        binding.favoriteDishRecyclerView.adapter = dishAdapter
 
         mDishViewModel.favoriteDishes.observe(viewLifecycleOwner){
             dishes ->
             dishes.let {
                 if (it.isNotEmpty()){
                     for(dish in it){
-                        Log.i("Favorite Dish", "${dish.dish}")
+                        dishAdapter.dishesList(it)
+
+                        binding.favoriteDishRecyclerView.visibility = View.VISIBLE
+                        binding.textFavoriteTextView.visibility = View.GONE
                     }
                 }else{
-                    Log.i("Favorite Dish", "Empty")
+                    binding.favoriteDishRecyclerView.visibility = View.GONE
+                    binding.textFavoriteTextView.visibility = View.VISIBLE
                 }
             }
         }

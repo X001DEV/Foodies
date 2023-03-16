@@ -57,10 +57,10 @@ class AllDishesFragment : Fragment() {
             dishes.let {
                 Toast.makeText(requireActivity(), "DATA IS UPDATED", Toast.LENGTH_SHORT).show()
                if (it.isNotEmpty()){
+                   dishAdapter.dishesList(it)
+
                    binding.dishRecyclerView.visibility = View.VISIBLE
                    binding.textNoDataTextView.visibility = View.GONE
-
-                   dishAdapter.dishesList(it)
                }else{
                    binding.dishRecyclerView.visibility = View.INVISIBLE
                    binding.textNoDataTextView.visibility = View.VISIBLE
