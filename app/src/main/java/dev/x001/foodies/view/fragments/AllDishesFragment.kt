@@ -3,6 +3,7 @@ package dev.x001.foodies.view.fragments
 import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -30,6 +31,10 @@ class AllDishesFragment : Fragment() {
 
     private lateinit var binding: FragmentAllDishesBinding
 
+    private lateinit var mDishAdapter: DishAdapter
+
+    private lateinit var mListDialog: Dialog
+
     private val mDishViewModel: DishViewModel by viewModels{
         DishViewModelFactory((requireActivity().application as DishApplication).repository)
     }
@@ -47,15 +52,15 @@ class AllDishesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val dishAdapter = DishAdapter(this@AllDishesFragment)
-        binding.dishRecyclerView.adapter = dishAdapter
+        mDishAdapter = DishAdapter(this@AllDishesFragment)
+        binding.dishRecyclerView.adapter = mDishAdapter
 
         mDishViewModel.allDishesList.observe(viewLifecycleOwner){
             dishes ->
             dishes.let {
                 Toast.makeText(requireActivity(), "DATA IS UPDATED", Toast.LENGTH_SHORT).show()
                if (it.isNotEmpty()){
-                   dishAdapter.dishesList(it)
+                   mDishAdapter.dishesList(it)
 
                    binding.dishRecyclerView.visibility = View.VISIBLE
                    binding.textNoDataTextView.visibility = View.GONE
@@ -107,18 +112,43 @@ class AllDishesFragment : Fragment() {
     }
 
     private fun filterDishesListDialog(){
-        val listDialog = Dialog(requireActivity())
+        mListDialog = Dialog(requireActivity())
         val dialogBinding: DialogListBinding = DialogListBinding.inflate(layoutInflater)
-        listDialog.setContentView(dialogBinding.root)
+        mListDialog.setContentView(dialogBinding.root)
 
         dialogBinding.titleTextView.text = "Select item filter"
         val dishTypes = Constants.dishTypes
         dishTypes.add(0, Constants.ALL_ITEMS)
 
-        val adapter = ListItemAdapter(requireActivity(), dishTypes, Constants.FILTER_SELECTION)
+        val adapter = ListItemAdapter(requireActivity(), this@AllDishesFragment, dishTypes, Constants.FILTER_SELECTION)
 
         dialogBinding.listRecyclerView.adapter = adapter
-        listDialog.show()
+        mListDialog.show()
+    }
+
+    fun filterSelection(filterItemSelection: String){
+        mListDialog.dismiss()
+
+        Log.i("Filter Selection", filterItemSelection)
+        if (filterItemSelection == Constants.ALL_ITEMS){
+            mDishViewModel.allDishesList.observe(viewLifecycleOwner){
+                    dishes ->
+                dishes.let {
+                    Toast.makeText(requireActivity(), "DATA IS UPDATED", Toast.LENGTH_SHORT).show()
+                    if (it.isNotEmpty()){
+                        mDishAdapter.dishesList(it)
+
+                        binding.dishRecyclerView.visibility = View.VISIBLE
+                        binding.textNoDataTextView.visibility = View.GONE
+                    }else{
+                        binding.dishRecyclerView.visibility = View.INVISIBLE
+                        binding.textNoDataTextView.visibility = View.VISIBLE
+                    }
+                }
+            }
+        }else{
+            Log.i("Filter List", "Get filter list")
+        }
     }
 
     override fun onResume() {

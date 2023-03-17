@@ -349,7 +349,7 @@ class AddUpdateDishActivity : AppCompatActivity(), View.OnClickListener {
 
         dialogBinding.titleTextView.text = title
 
-        val adapter = ListItemAdapter(this, itemsList, selection)
+        val adapter = ListItemAdapter(this, null, itemsList, selection)
         dialogBinding.listRecyclerView.adapter = adapter
         mListDialog.show()
     }
