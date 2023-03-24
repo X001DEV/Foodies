@@ -23,6 +23,9 @@ class DishViewModel(private val repository: DishRepository): ViewModel() {
         repository.deleteDishData(dish)
     }
 
+    fun getFilteredList(value: String): LiveData<List<Dish>> =
+        repository.filteredListDishes(value).asLiveData()
+
 }
 
 class DishViewModelFactory(private val repository: DishRepository): ViewModelProvider.Factory{

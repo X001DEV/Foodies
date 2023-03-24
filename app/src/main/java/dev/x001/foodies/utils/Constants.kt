@@ -25,6 +25,18 @@ object Constants {
         "Other"
     )
 
+    val dishFilters = arrayListOf(
+        "All",
+        "Breakfast",
+        "Lunch",
+        "Snacks",
+        "Dinner",
+        "Salad",
+        "Side Dish",
+        "Dessert",
+        "Other"
+    )
+
     val dishCategory = arrayListOf(
         "Pizza",
         "BBQ",

@@ -117,9 +117,7 @@ class AllDishesFragment : Fragment() {
         mListDialog.setContentView(dialogBinding.root)
 
         dialogBinding.titleTextView.text = "Select item filter"
-        val dishTypes = Constants.dishTypes
-        dishTypes.add(0, Constants.ALL_ITEMS)
-
+        val dishTypes = Constants.dishFilters
         val adapter = ListItemAdapter(requireActivity(), this@AllDishesFragment, dishTypes, Constants.FILTER_SELECTION)
 
         dialogBinding.listRecyclerView.adapter = adapter
@@ -147,7 +145,20 @@ class AllDishesFragment : Fragment() {
                 }
             }
         }else{
-            Log.i("Filter List", "Get filter list")
+           mDishViewModel.getFilteredList(filterItemSelection).observe(viewLifecycleOwner){
+               dishes ->
+               dishes.let {
+                   if (it.isNotEmpty()){
+                       mDishAdapter.dishesList(it)
+
+                       binding.dishRecyclerView.visibility = View.VISIBLE
+                       binding.textNoDataTextView.visibility = View.GONE
+                   }else{
+                       binding.dishRecyclerView.visibility = View.GONE
+                       binding.textNoDataTextView.visibility = View.VISIBLE
+                   }
+               }
+           }
         }
     }
 
