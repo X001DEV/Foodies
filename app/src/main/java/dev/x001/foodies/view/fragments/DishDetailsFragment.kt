@@ -1,6 +1,8 @@
 package dev.x001.foodies.view.fragments
 
+import android.os.Build
 import android.os.Bundle
+import android.text.Html
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -15,6 +17,7 @@ import dev.x001.foodies.R
 import dev.x001.foodies.application.DishApplication
 import dev.x001.foodies.databinding.FragmentAllDishesBinding
 import dev.x001.foodies.databinding.FragmentDishDetailsBinding
+import dev.x001.foodies.utils.Constants
 import dev.x001.foodies.viewmodel.DishViewModel
 import dev.x001.foodies.viewmodel.DishViewModelFactory
 
@@ -48,8 +51,26 @@ class DishDetailsFragment : Fragment() {
         binding.dishTextView.text = args.dishDetails.dish
         binding.categoryAndTypeTextView.text = "${args.dishDetails.category} · ${args.dishDetails.type}"
         binding.ingredientsTextView.text = args.dishDetails.ingredients
-        binding.directionsTextView.text = args.dishDetails.directionToCook
-        binding.cookingTimeTextView.text = "${args.dishDetails.cookingTime} minutes"
+
+        var directions = ""
+        if (args.dishDetails.imageSource == Constants.DISH_IMAGE_SOURCE_ONLINE){
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
+                directions = Html.fromHtml(
+                    args.dishDetails.directionToCook,
+                    Html.FROM_HTML_MODE_COMPACT
+                ).toString()
+            } else {
+                @Suppress("DEPRECATION")
+                directions = Html.fromHtml(args.dishDetails.directionToCook).toString()
+            }
+        }else{
+            args.dishDetails.directionToCook
+        }
+
+        binding.directionsTextView.text = directions
+
+
+            binding.cookingTimeTextView.text = "${args.dishDetails.cookingTime} minutes"
 
         Glide.with(requireContext())
             .load(args.dishDetails.image)
