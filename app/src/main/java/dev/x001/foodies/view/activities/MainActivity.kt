@@ -9,9 +9,13 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import androidx.work.*
 import com.blogspot.atifsoftwares.animatoolib.Animatoo
 import dev.x001.foodies.R
 import dev.x001.foodies.databinding.ActivityMainBinding
+import dev.x001.foodies.model.notification.NotifyWorker
+import dev.x001.foodies.utils.Constants
+import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
 
@@ -39,6 +43,13 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(mNavController, appBarConfiguration)
         navView.setupWithNavController(mNavController)
         binding.navView.setupWithNavController(mNavController)
+
+        if (intent.hasExtra(Constants.NOTIFICATION_ID)){
+            val notificationId = intent.getIntExtra(Constants.NOTIFICATION_ID, 0)
+            binding.navView.selectedItemId = R.id.navigation_random_dish
+        }
+
+        startWork()
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -55,4 +66,23 @@ class MainActivity : AppCompatActivity() {
         binding.navView.animate().translationY(0f).duration = 300
     }
 
+    private fun createConstrains() = Constraints.Builder()
+        .setRequiredNetworkType(NetworkType.CONNECTED)
+        .setRequiresCharging(false)
+        .setRequiresBatteryNotLow(true)
+        .build()
+
+    private fun createWorkRequest() = PeriodicWorkRequestBuilder<NotifyWorker>(
+        15, TimeUnit.MINUTES)
+        .setConstraints(createConstrains())
+        .build()
+
+    private fun startWork(){
+        WorkManager.getInstance(this)
+            .enqueueUniquePeriodicWork(
+                "Dish Notify Work",
+                ExistingPeriodicWorkPolicy.KEEP,
+                createWorkRequest()
+            )
+    }
 }

@@ -28,6 +28,10 @@ object Constants {
     const val TAGS_VALUE: String = ""
     const val NUMBER_VALUE: Int = 1
 
+    const val NOTIFICATION_ID = "Dish_notification_id"
+    const val NOTIFICATION_NAME = "Foodies"
+    const val NOTIFICATION_CHANNEL = "Foodies_channel_01"
+
     val dishTypes = arrayListOf(
         "Breakfast",
         "Lunch",
